@@ -5,6 +5,19 @@ int main()
 {
     sf::RenderWindow window(sf::VideoMode(800, 600), "GAME KEITH");
 
+    sf::Font font;
+    if (!font.loadFromFile("fonts/Aaargh.ttf")) 
+    {
+        std::cerr << "Could not load the font" << std::endl;
+        exit(-1);
+    }
+
+    // sf::Text text("Some text");
+    // text.setPosition(300, 300);
+
+    float circleSpeedX = 3.0f;
+    float circleSpeedY = 3.0f;
+
     sf::CircleShape circle(30.f);
     circle.setFillColor(sf::Color(200, 200, 0));
 
@@ -25,11 +38,32 @@ int main()
                 window.close();
         }
 
+        circle.setPosition(
+            circle.getPosition().x + circleSpeedX, 
+            circle.getPosition().y + circleSpeedY
+        );
+
+        if (
+            circle.getPosition().x < 0 || 
+            circle.getPosition().x + (circle.getRadius()) * 2 > window.getSize().x
+            ) 
+        {
+            circleSpeedX = -circleSpeedX;
+        }
+
+        if (
+            circle.getPosition().y < 0 || 
+            circle.getPosition().y + (circle.getRadius()) * 2 > window.getSize().y
+        ) 
+        {
+            circleSpeedY = -circleSpeedY;
+        }
+
         window.clear(sf::Color::Black);
 
         window.draw(circle);
 
-        window.draw(rect);
+        // window.draw(rect);
 
         window.display();
     }
