@@ -12,8 +12,14 @@ int main()
         exit(-1);
     }
 
-    // sf::Text text("Some text");
-    // text.setPosition(300, 300);
+    sf::Text text;
+    
+    text.setFont(font);
+    
+    text.setString("Some text");
+    text.setCharacterSize(24);
+    text.setFillColor(sf::Color::White);
+    text.setPosition(300, 300);
 
     float circleSpeedX = 3.0f;
     float circleSpeedY = 3.0f;
@@ -62,6 +68,8 @@ int main()
         window.clear(sf::Color::Black);
 
         window.draw(circle);
+
+        window.draw(text);
 
         // window.draw(rect);
 
