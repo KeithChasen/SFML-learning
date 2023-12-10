@@ -27,6 +27,9 @@ int main()
     sf::CircleShape circle(30.f);
     circle.setFillColor(sf::Color(200, 200, 0));
 
+    float rectSpeedX = 4.0f;
+    float rectSpeedY = 4.0f;
+
     sf::RectangleShape rect(sf::Vector2f(120.f, 50.f));
     
 
@@ -49,12 +52,25 @@ int main()
             circle.getPosition().y + circleSpeedY
         );
 
+        rect.setPosition(
+            rect.getPosition().x + rectSpeedX,
+            rect.getPosition().y + rectSpeedY
+        );
+
         if (
             circle.getPosition().x < 0 || 
             circle.getPosition().x + (circle.getRadius()) * 2 > window.getSize().x
             ) 
         {
             circleSpeedX = -circleSpeedX;
+        }
+
+        if (
+            rect.getPosition().x < 0 || 
+            rect.getPosition().x + rect.getSize().x > window.getSize().x
+            ) 
+        {
+            rectSpeedX = -rectSpeedX;
         }
 
         if (
@@ -65,13 +81,21 @@ int main()
             circleSpeedY = -circleSpeedY;
         }
 
+        if (
+            rect.getPosition().y < 0 || 
+            rect.getPosition().y + rect.getSize().y > window.getSize().y
+        ) 
+        {
+            rectSpeedY = -rectSpeedY;
+        }
+
         window.clear(sf::Color::Black);
 
         window.draw(circle);
 
         window.draw(text);
 
-        // window.draw(rect);
+        window.draw(rect);
 
         window.display();
     }
