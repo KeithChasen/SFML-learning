@@ -5,42 +5,172 @@
 
 class CircleWrapper
 {
-    std::string name;
+    sf::Text m_name;
 
-    int m_x;
-    int m_y;
+    float m_x;
+    float m_y;
 
-    int m_sx;
-    int m_sy;
+    float m_sx;
+    float m_sy;
 
     int m_R;
     int m_G;
     int m_B;
 
-    int m_r;
+    float m_r;
+
+    sf::CircleShape circle;
 
 public:
+    CircleWrapper(
+            std::string name,
+            float x, 
+            float y, 
+            float sx, 
+            float sy, 
+            int R, 
+            int G, 
+            int B, 
+            float r, 
+            sf::Font font, 
+            int fontSize,
+            int fR,
+            int fG,
+            int fB
+        )
+        : m_sx(sx)
+        , m_sy(sy)
+    {
+        circle.setRadius(r);
 
+        circle.setPosition(x, y);
+        circle.setFillColor(sf::Color(R, G, B));
+
+        // set font and text
+        //! todo: learn inheritance in C++ and refactor
+        // m_name.setFont(font);
+        // m_name.setString(name);
+        // m_name.setCharacterSize(fontSize);
+        // sf::Color color(fR, fG, fB);
+        // m_name.setFillColor(color);
+        // m_name.setPosition(x, y);
+    }
+
+    sf::CircleShape& getCircle()
+    {
+        return circle;
+    }
+
+    //! inheritance
+    float getSpeedX() 
+    {
+        return m_sx;
+    }
+
+    float getSpeedY() 
+    {
+        return m_sy;
+    }
+
+    void setSpeedX(float sx) 
+    {
+        m_sx = sx;
+    }
+
+    void setSpeedY(float sy)
+    {
+        m_sy = sy;
+    }
+    //! inheritance
 };
 
 class RectWrapper
 {
-    std::string name;
+    sf::Text m_name;
 
-    int m_x;
-    int m_y;
+    float m_x;
+    float m_y;
 
-    int m_sx;
-    int m_sy;
+    float m_sx;
+    float m_sy;
 
     int m_R;
     int m_G;
     int m_B;
 
-    int m_w;
-    int m_h;
+    float m_w;
+    float m_h;
+
+    sf::RectangleShape rect;
 
 public:
+    RectWrapper(
+            std::string name, 
+            float x, 
+            float y, 
+            float sx, 
+            float sy, 
+            int R, 
+            int G, 
+            int B, 
+            float w, 
+            float h, 
+            sf::Font font, 
+            int fontSize,
+            int fR,
+            int fG,
+            int fB
+    )
+        : m_x(x)
+        , m_y(y)
+        , m_sx(sx)
+        , m_sy(sy)
+        , m_R(R)
+        , m_G(G)
+        , m_B(B)
+    {
+        rect.setSize(sf::Vector2f(w, h));
+
+        rect.setPosition(x, y);
+        rect.setFillColor(sf::Color(R, G, B));
+
+        // set font and text
+
+        //! todo: learn inheritance in C++ and refactor
+        // m_name.setFont(font);
+        // m_name.setString(name);
+        // m_name.setCharacterSize(fontSize);
+        // sf::Color color(fR, fG, fB);
+        // m_name.setFillColor(color);
+        // m_name.setPosition(x, y);
+    }
+
+    sf::RectangleShape& getRect()
+    {
+        return rect;
+    }
+
+    //! inheritance
+    float getSpeedX() 
+    {
+        return m_sx;
+    }
+
+    float getSpeedY() 
+    {
+        return m_sy;
+    }
+
+    void setSpeedX(float sx) 
+    {
+        m_sx = sx;
+    }
+
+    void setSpeedY(float sy)
+    {
+        m_sy = sy;
+    }
+    //! inheritance
 
 };
 
@@ -48,6 +178,8 @@ class ShapeKeeper
 {
     std::vector<CircleWrapper> circles;
     std::vector<RectWrapper> rects;
+
+    sf::Font font;
 
     int windowWidth;
     int windowHeight;
@@ -59,6 +191,35 @@ class ShapeKeeper
     int fontG;
     int fontB;
 
+public:
+
+    ShapeKeeper() {}
+
+    sf::Font getFont()
+    {
+        return font;
+    }
+
+    int getFontR()
+    {
+        return fontR;
+    }
+
+    int getFontG()
+    {
+        return fontG;
+    }
+
+    int getFontB()
+    {
+        return fontB;
+    }
+
+    int getFontSize()
+    {
+        return fontSize;
+    }
+
     void setFont(
         const std::string& path, 
         const int size, 
@@ -67,7 +228,12 @@ class ShapeKeeper
         const int B
     ) 
     {
-        fontPath = path;
+        if (!font.loadFromFile(path)) 
+        {
+            std::cerr << "Could not load the font" << std::endl;
+            exit(-1);
+        }
+
         fontSize = size;
 
         fontR = R;
@@ -84,82 +250,84 @@ class ShapeKeeper
         windowHeight = H;
     }
 
-    void setRect(
-        std:: string name, 
-        int x, 
-        int y, 
-        int sx, 
-        int sy, 
-        int R, 
-        int G, 
-        int B, 
-        int w, 
-        int h
-    )
+    int getWindowWidth()
     {
-
+        return windowWidth;
     }
 
-    void setCircle(
-        std:: string name, 
-        int x, 
-        int y, 
-        int sx, 
-        int sy, 
-        int R, 
-        int G, 
-        int B, 
-        int r
-    )
+    int getWindowHeight()
     {
-
+        return windowHeight;
     }
 
+    std::vector<CircleWrapper> getCircles()
+    {
+        return circles;
+    }
+
+    std::vector<RectWrapper> getRects()
+    {
+        return rects;
+    }
 
     void readShapesFromFile(const std::string& filename)
     {
         //input file stream
         std::ifstream fileStream(filename);
 
+        std::string name, text;
+
+        float x, y, sx, sy, r;
+        int   R, G, B, w, h, W, H;
+
+        std::string fontPath;
+
+        int fontSize, fontR, fontG, fontB;
+
+        while (fileStream >> name)
+        {
+            if (name == "Window") 
+            {
+                fileStream >> W >> H;
+                setWindowSettings(W, H);
+            }
+
+            if (name == "Font") 
+            {
+                fileStream >> fontPath >> fontSize >> fontR >> fontG >> fontB;
+                setFont(fontPath, fontSize, fontR, fontG, fontB);
+            }
+
+            if (name == "Circle") 
+            {
+                fileStream >> text >> x >> y >> sx >> sy >> R >> G >> B >> r;
+                circles.push_back(CircleWrapper(text, x, y, sx, sy, R, G, B, r, getFont(), getFontSize(), getFontR(), getFontG(), getFontB()));
+            }
+
+            if (name == "Rectangle")
+            {
+                fileStream >> text >> x >> y >> sx >> sy >> R >> G >> B >> w >> h;
+                rects.push_back(RectWrapper(text, x, y, sx, sy, R, G, B, w, h, getFont(), getFontSize(), getFontR(), getFontG(), getFontB()));
+            }
+        }
     }
 };
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(800, 600), "GAME KEITH");
+    ShapeKeeper shapeKeeper;
 
-    sf::Font font;
-    if (!font.loadFromFile("fonts/Aaargh.ttf")) 
-    {
-        std::cerr << "Could not load the font" << std::endl;
-        exit(-1);
-    }
+    shapeKeeper.readShapesFromFile("config.txt");
 
-    sf::Text text;
-    
-    text.setFont(font);
-    
-    text.setString("Some text");
-    text.setCharacterSize(24);
-    text.setFillColor(sf::Color::White);
-    text.setPosition(300, 300);
-
-    float circleSpeedX = 3.0f;
-    float circleSpeedY = 3.0f;
-
-    sf::CircleShape circle(30.f);
-    circle.setFillColor(sf::Color(200, 200, 0));
-
-    float rectSpeedX = 4.0f;
-    float rectSpeedY = 4.0f;
-
-    sf::RectangleShape rect(sf::Vector2f(120.f, 50.f));
-    
+    sf::RenderWindow window(sf::VideoMode(shapeKeeper.getWindowWidth(), shapeKeeper.getWindowHeight()), "GAME KEITH");
 
     // set frame rate limit
     // to run app at a given frame rate 
     // instead of monitor's frequency
     window.setFramerateLimit(60);
+
+    std::vector<CircleWrapper> circles = shapeKeeper.getCircles();
+    std::vector<RectWrapper> rects = shapeKeeper.getRects();
     
     while (window.isOpen())
     {
@@ -170,55 +338,68 @@ int main()
                 window.close();
         }
 
-        circle.setPosition(
-            circle.getPosition().x + circleSpeedX, 
-            circle.getPosition().y + circleSpeedY
-        );
-
-        rect.setPosition(
-            rect.getPosition().x + rectSpeedX,
-            rect.getPosition().y + rectSpeedY
-        );
-
-        if (
-            circle.getPosition().x < 0 || 
-            circle.getPosition().x + (circle.getRadius()) * 2 > window.getSize().x
-            ) 
-        {
-            circleSpeedX = -circleSpeedX;
-        }
-
-        if (
-            rect.getPosition().x < 0 || 
-            rect.getPosition().x + rect.getSize().x > window.getSize().x
-            ) 
-        {
-            rectSpeedX = -rectSpeedX;
-        }
-
-        if (
-            circle.getPosition().y < 0 || 
-            circle.getPosition().y + (circle.getRadius()) * 2 > window.getSize().y
-        ) 
-        {
-            circleSpeedY = -circleSpeedY;
-        }
-
-        if (
-            rect.getPosition().y < 0 || 
-            rect.getPosition().y + rect.getSize().y > window.getSize().y
-        ) 
-        {
-            rectSpeedY = -rectSpeedY;
-        }
-
         window.clear(sf::Color::Black);
 
-        window.draw(circle);
+        for (auto& c : circles) 
+        {
+            // std::cout << c.getCircle().getPosition().x << " C position X" << std::endl;
+            // std::cout << c.getSpeedX() << " c get speed x" << std::endl;
+            // std::cout << " " << std::endl;
+            // std::cout << c.getCircle().getPosition().y << " C position Y" << std::endl;
+            // std::cout << c.getSpeedY() << " c get speed y" << std::endl;
 
-        window.draw(text);
+            c.getCircle().setPosition(
+                c.getCircle().getPosition().x + c.getSpeedX(),
+                c.getCircle().getPosition().y + c.getSpeedY()
+            );
 
-        window.draw(rect);
+            if (
+                c.getCircle().getPosition().x < 0 || 
+                c.getCircle().getPosition().x + (c.getCircle().getRadius()) * 2 > window.getSize().x
+            ) 
+            {
+                c.setSpeedX(-c.getSpeedX());
+            }
+
+            if (
+                c.getCircle().getPosition().y < 0 || 
+                c.getCircle().getPosition().y + (c.getCircle().getRadius()) * 2 > window.getSize().y
+            ) 
+            {
+                c.setSpeedY(-c.getSpeedY());
+            }
+
+            window.draw(c.getCircle());
+        }
+
+        for (auto& r : rects) 
+        {
+            r.getRect().setPosition(
+                r.getRect().getPosition().x + r.getSpeedX(),
+                r.getRect().getPosition().y + r.getSpeedY()
+            );
+
+
+            if (
+                r.getRect().getPosition().x < 0 || 
+                r.getRect().getPosition().x + r.getRect().getSize().x > window.getSize().x
+                ) 
+            {
+                r.setSpeedX(-r.getSpeedX());
+            }
+
+            if (
+                r.getRect().getPosition().y < 0 || 
+                r.getRect().getPosition().y + r.getRect().getSize().y > window.getSize().y
+            ) 
+            {
+                r.setSpeedY(-r.getSpeedY());
+            }
+
+            window.draw(r.getRect());
+        }
+
+        // window.draw(text);
 
         window.display();
     }
