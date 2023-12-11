@@ -23,7 +23,7 @@ class CircleWrapper
 
 public:
     CircleWrapper(
-            std::string name,
+            std::string& name,
             float x, 
             float y, 
             float sx, 
@@ -31,12 +31,7 @@ public:
             int R, 
             int G, 
             int B, 
-            float r, 
-            sf::Font font, 
-            int fontSize,
-            int fR,
-            int fG,
-            int fB
+            float r
         )
         : m_sx(sx)
         , m_sy(sy)
@@ -45,15 +40,11 @@ public:
 
         circle.setPosition(x, y);
         circle.setFillColor(sf::Color(R, G, B));
+    }
 
-        // set font and text
-        //! todo: learn inheritance in C++ and refactor
-        // m_name.setFont(font);
-        // m_name.setString(name);
-        // m_name.setCharacterSize(fontSize);
-        // sf::Color color(fR, fG, fB);
-        // m_name.setFillColor(color);
-        // m_name.setPosition(x, y);
+    sf::Text getName()
+    {
+        return m_name;
     }
 
     sf::CircleShape& getCircle()
@@ -88,6 +79,8 @@ class RectWrapper
 {
     sf::Text m_name;
 
+    sf::Font font;
+
     float m_x;
     float m_y;
 
@@ -114,12 +107,7 @@ public:
             int G, 
             int B, 
             float w, 
-            float h, 
-            sf::Font font, 
-            int fontSize,
-            int fR,
-            int fG,
-            int fB
+            float h
     )
         : m_x(x)
         , m_y(y)
@@ -133,16 +121,6 @@ public:
 
         rect.setPosition(x, y);
         rect.setFillColor(sf::Color(R, G, B));
-
-        // set font and text
-
-        //! todo: learn inheritance in C++ and refactor
-        // m_name.setFont(font);
-        // m_name.setString(name);
-        // m_name.setCharacterSize(fontSize);
-        // sf::Color color(fR, fG, fB);
-        // m_name.setFillColor(color);
-        // m_name.setPosition(x, y);
     }
 
     sf::RectangleShape& getRect()
@@ -179,10 +157,10 @@ class ShapeKeeper
     std::vector<CircleWrapper> circles;
     std::vector<RectWrapper> rects;
 
-    sf::Font font;
-
     int windowWidth;
     int windowHeight;
+
+    sf::Font m_font;
 
     std::string fontPath;
     int fontSize;
@@ -192,54 +170,7 @@ class ShapeKeeper
     int fontB;
 
 public:
-
     ShapeKeeper() {}
-
-    sf::Font getFont()
-    {
-        return font;
-    }
-
-    int getFontR()
-    {
-        return fontR;
-    }
-
-    int getFontG()
-    {
-        return fontG;
-    }
-
-    int getFontB()
-    {
-        return fontB;
-    }
-
-    int getFontSize()
-    {
-        return fontSize;
-    }
-
-    void setFont(
-        const std::string& path, 
-        const int size, 
-        const int R, 
-        const int G, 
-        const int B
-    ) 
-    {
-        if (!font.loadFromFile(path)) 
-        {
-            std::cerr << "Could not load the font" << std::endl;
-            exit(-1);
-        }
-
-        fontSize = size;
-
-        fontR = R;
-        fontG = G;
-        fontB = B;
-    }
 
     void setWindowSettings(
         const int W, 
@@ -280,10 +211,6 @@ public:
         float x, y, sx, sy, r;
         int   R, G, B, w, h, W, H;
 
-        std::string fontPath;
-
-        int fontSize, fontR, fontG, fontB;
-
         while (fileStream >> name)
         {
             if (name == "Window") 
@@ -292,22 +219,16 @@ public:
                 setWindowSettings(W, H);
             }
 
-            if (name == "Font") 
-            {
-                fileStream >> fontPath >> fontSize >> fontR >> fontG >> fontB;
-                setFont(fontPath, fontSize, fontR, fontG, fontB);
-            }
-
             if (name == "Circle") 
             {
                 fileStream >> text >> x >> y >> sx >> sy >> R >> G >> B >> r;
-                circles.push_back(CircleWrapper(text, x, y, sx, sy, R, G, B, r, getFont(), getFontSize(), getFontR(), getFontG(), getFontB()));
+                circles.push_back(CircleWrapper(text, x, y, sx, sy, R, G, B, r));
             }
 
             if (name == "Rectangle")
             {
                 fileStream >> text >> x >> y >> sx >> sy >> R >> G >> B >> w >> h;
-                rects.push_back(RectWrapper(text, x, y, sx, sy, R, G, B, w, h, getFont(), getFontSize(), getFontR(), getFontG(), getFontB()));
+                rects.push_back(RectWrapper(text, x, y, sx, sy, R, G, B, w, h));
             }
         }
     }
@@ -370,6 +291,8 @@ int main()
             }
 
             window.draw(c.getCircle());
+
+            window.draw(c.getName());
         }
 
         for (auto& r : rects) 
@@ -398,9 +321,7 @@ int main()
 
             window.draw(r.getRect());
         }
-
-        // window.draw(text);
-
+        
         window.display();
     }
 
