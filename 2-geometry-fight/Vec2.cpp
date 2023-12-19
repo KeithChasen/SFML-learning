@@ -1,4 +1,5 @@
 #include "Vec2.h"
+#include <math.h>
 
 Vec2::Vec2()
 {    
@@ -12,15 +13,13 @@ Vec2::Vec2(float xin, float yin)
 
 bool Vec2::operator == (const Vec2& rhs) const
 {
-    return false;
+    return x == rhs.x && y == rhs.y;
 }
 
 bool Vec2::operator != (const Vec2& rhs) const
 {
-    return false;
+    return x != rhs.x || y != rhs.y;
 }
-
-
 
 Vec2 Vec2::operator + (const Vec2& rhs) const
 {
@@ -29,17 +28,17 @@ Vec2 Vec2::operator + (const Vec2& rhs) const
 
 Vec2 Vec2::operator - (const Vec2& rhs) const
 {
-    return Vec2(0, 0);
+    return Vec2(x - rhs.x, y - rhs.y);
 }
 
 Vec2 Vec2::operator / (const float val) const
 {
-    return Vec2(0, 0);
+    return Vec2(x / val, y / val);
 }
 
 Vec2 Vec2::operator * (const float val) const
 {
-    return Vec2(0, 0);
+    return Vec2(x * val, y * val);
 }
 
 
@@ -51,21 +50,21 @@ Vec2 Vec2::operator += (const Vec2& rhs) const
 
 Vec2 Vec2::operator -= (const Vec2& rhs) const
 {
-    return Vec2(0, 0);
+    return Vec2(x - rhs.x, y - rhs.y);
 }
 
 Vec2 Vec2::operator /= (const float val) const
 {
-    return Vec2(0, 0);
+    return Vec2(x / val, y / val);
 }
 
 Vec2 Vec2::operator *= (const float val) const
 {
-    return Vec2(0, 0);
+    return Vec2(x * val, y * val);
 }
 
 
-float Vec2::dist(const float val) const
+float Vec2::dist(const Vec2& v) const
 {
-    return 0.0f;
+    return sqrtf((v.x-x)*(v.x-x)+(v.y-y)*(v.y-y));
 }

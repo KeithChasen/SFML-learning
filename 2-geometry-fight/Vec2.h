@@ -21,6 +21,6 @@ public:
     Vec2 operator /= (const float val) const;
     Vec2 operator *= (const float val) const;
 
-    float dist(const float val) const;
+    float dist(const Vec2& v) const;
 };
 
